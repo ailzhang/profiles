@@ -1,7 +1,9 @@
 import os, json
 import taichi as ti
 import time
-ti.init(arch=ti.opengl, print_ir=False,log_level=ti.INFO, allow_nv_shader_extension=False, use_gles=True, ndarray_use_torch=False)
+import cProfile, pstats
+from pstats import SortKey
+ti.init(arch=ti.cpu, print_ir=False,log_level=ti.INFO, allow_nv_shader_extension=False, use_gles=True, ndarray_use_torch=False)
 dim = 2
 N = 64
 n_particles = N * N * 2
@@ -49,9 +51,6 @@ C = ti.Matrix.ndarray(dim, dim, ti.f32, n_particles)
 grid_v = ti.Vector.ndarray(dim, ti.f32, (n_grid, n_grid))
 grid_m = ti.ndarray(ti.f32, (n_grid, n_grid))
 
-@ti.kernel
-def test(x: ti.any_arr(element_dim=1), v: ti.any_arr(element_dim=1),):
-    pass
 def run_steps(n=500):
     for s in range(n):
         substep(x, v, J, C, grid_v, grid_m)
@@ -81,9 +80,19 @@ def profile():
         start = time.time()
         for _ in range(200):
             run_steps()
-            x.to_numpy()
+            # x.to_numpy()
         print(time.time() - start)
+
+def use_profiler():
+    init(x, v, J)
+    with cProfile.Profile() as pr:
+        for _ in range(200):
+            run_steps()
+    # pr.print_stats(sort=SortKey.TIME)
+    stats = pstats.Stats(pr).print_callees()
 
 # run()
 # aot()
-profile()
+# profile()
+use_profiler()
+
