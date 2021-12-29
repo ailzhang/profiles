@@ -12,27 +12,29 @@ E = 400
 @ti.kernel
 def substep(x: ti.any_arr(element_dim=1), v: ti.any_arr(element_dim=1), J: ti.any_arr(),
             C: ti.any_arr(element_dim=2), grid_v: ti.any_arr(element_dim=1), grid_m: ti.any_arr()):
-    dx = 1 / grid_v.shape[0]
-    inv_dx = grid_v.shape[0]
-    p_vol = (dx * 0.5)**2
-    p_mass = p_vol * p_rho
-    dt = min(2.0e-4 / (grid_v.shape[0] / 128), 2.0e-4)
-    for i, j in grid_m:
-        grid_v[i, j] = [0, 0]
-        grid_m[i, j] = 0
-    for p in x:
-        base = (x[p] * inv_dx - 0.5).cast(int)
-        fx = x[p] * inv_dx - base.cast(float)
-        w = [0.5 * (1.5 - fx)**2, 0.75 - (fx - 1)**2, 0.5 * (fx - 0.5)**2]
-        stress = -dt * p_vol * (J[p] - 1) * 4 * inv_dx * inv_dx * E
-        affine = ti.Matrix([[stress, 0], [0, stress]]) + p_mass * C[p]
-        for i, j in ti.static(ti.ndrange(3, 3)):
-                offset = ti.Vector([i, j])
-                dpos = (offset - fx) * dx
-                weight = w[i][0] * w[j][1]
-                grid_v[base + offset].atomic_add(
-                        weight * (p_mass * v[p] + affine @ dpos))
-                grid_m[base + offset].atomic_add(weight * p_mass)
+    pass
+    # dx = 1 / grid_v.shape[0]
+    # inv_dx = grid_v.shape[0]
+    # p_vol = (dx * 0.5)**2
+    # p_mass = p_vol * p_rho
+    # dt = min(2.0e-4 / (grid_v.shape[0] / 128), 2.0e-4)
+    #for i, j in grid_m:
+    #    grid_v[i, j] = [0, 0]
+    #    grid_m[i, j] = 0
+    #for p in x:
+    #    base = (x[p] * inv_dx - 0.5).cast(int)
+    #    fx = x[p] * inv_dx - base.cast(float)
+    #    w = [0.5 * (1.5 - fx)**2, 0.75 - (fx - 1)**2, 0.5 * (fx - 0.5)**2]
+    #    stress = -dt * p_vol * (J[p] - 1) * 4 * inv_dx * inv_dx * E
+    #    affine = ti.Matrix([[stress, 0], [0, stress]]) + p_mass * C[p]
+    #    for i, j in ti.static(ti.ndrange(3, 3)):
+    #            offset = ti.Vector([i, j])
+    #            dpos = (offset - fx) * dx
+    #            weight = w[i][0] * w[j][1]
+    #            grid_v[base + offset].atomic_add(
+    #                    weight * (p_mass * v[p] + affine @ dpos))
+    #            grid_m[base + offset].atomic_add(weight * p_mass)
+
 
 @ti.kernel
 def init(x: ti.any_arr(element_dim=1), v: ti.any_arr(element_dim=1), J: ti.any_arr()):
@@ -46,6 +48,10 @@ J = ti.ndarray(ti.f32, n_particles)
 C = ti.Matrix.ndarray(dim, dim, ti.f32, n_particles)
 grid_v = ti.Vector.ndarray(dim, ti.f32, (n_grid, n_grid))
 grid_m = ti.ndarray(ti.f32, (n_grid, n_grid))
+
+@ti.kernel
+def test(x: ti.any_arr(element_dim=1), v: ti.any_arr(element_dim=1),):
+    pass
 def run_steps(n=500):
     for s in range(n):
         substep(x, v, J, C, grid_v, grid_m)
