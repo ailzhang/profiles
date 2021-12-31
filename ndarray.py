@@ -3,7 +3,7 @@ import taichi as ti
 import time
 import cProfile, pstats
 from pstats import SortKey
-ti.init(arch=ti.cpu, print_ir=False,log_level=ti.INFO, allow_nv_shader_extension=False, use_gles=True, ndarray_use_torch=False)
+ti.init(arch=ti.opengl, print_ir=False,log_level=ti.TRACE, allow_nv_shader_extension=False, use_gles=True, ndarray_use_torch=False)
 dim = 2
 N = 64
 n_particles = N * N * 2
@@ -25,8 +25,7 @@ def substep(x: ti.any_arr(element_dim=1), v: ti.any_arr(element_dim=1), J: ti.an
     #    grid_m[i, j] = 0
     #for p in x:
     #    base = (x[p] * inv_dx - 0.5).cast(int)
-    #    fx = x[p] * inv_dx - base.cast(float)
-    #    w = [0.5 * (1.5 - fx)**2, 0.75 - (fx - 1)**2, 0.5 * (fx - 0.5)**2]
+    #    fx = x[p] * inv_dx - base.cast(float) #    w = [0.5 * (1.5 - fx)**2, 0.75 - (fx - 1)**2, 0.5 * (fx - 0.5)**2]
     #    stress = -dt * p_vol * (J[p] - 1) * 4 * inv_dx * inv_dx * E
     #    affine = ti.Matrix([[stress, 0], [0, stress]]) + p_mass * C[p]
     #    for i, j in ti.static(ti.ndrange(3, 3)):
@@ -74,7 +73,7 @@ def aot():
         json.load(json_file)
 
 def profile():
-    init(x, v, J)
+    # init(x, v, J)
     gui = ti.GUI('MPM88')
     while gui.running and not gui.get_event(gui.ESCAPE):
         start = time.time()
@@ -88,11 +87,11 @@ def use_profiler():
     with cProfile.Profile() as pr:
         for _ in range(200):
             run_steps()
-    # pr.print_stats(sort=SortKey.TIME)
-    stats = pstats.Stats(pr).print_callees()
+    pr.print_stats(sort=SortKey.TIME)
+    # stats = pstats.Stats(pr).print_callees()
 
 # run()
 # aot()
-# profile()
-use_profiler()
+profile()
+# use_profiler()
 

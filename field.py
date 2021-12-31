@@ -94,7 +94,7 @@ def profile():
         start = time.time()
         for _ in range(200):
             run_steps()
-            x.to_numpy()
+            # x.to_numpy()
         print(time.time() - start)
 #
 # run()
