@@ -3,10 +3,10 @@ import taichi as ti
 import time
 import cProfile, pstats
 from pstats import SortKey
-ti.init(arch=ti.opengl, print_ir=False, log_level=ti.TRACE, allow_nv_shader_extension=False, use_gles=True, ndarray_use_torch=False)
+ti.init(arch=ti.opengl, max_block_dim=128, print_ir=False, log_level=ti.TRACE, allow_nv_shader_extension=False, use_gles=True, ndarray_use_torch=False)
 dim = 2
 N = 64
-n_particles = N * N * 2
+n_particles = N * N * 2 * 16
 n_grid = 128
 p_rho = 1
 bound = 3
