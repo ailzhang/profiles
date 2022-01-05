@@ -4,7 +4,7 @@ import json
 import os
 import time
 
-ti.init(arch=ti.opengl, packed=False, allow_nv_shader_extension=False, use_gles=True, ndarray_use_torch=False)
+ti.init(arch=ti.opengl, log_level=ti.TRACE, allow_nv_shader_extension=False, use_gles=True, ndarray_use_torch=False)
 
 #ti.set_logging_level(ti.TRACE)
 
@@ -79,7 +79,7 @@ def run_steps(n=500):
         substep()
 
 def run():
-    init()
+    # init()
     gui = ti.GUI('MPM88')
     while gui.running and not gui.get_event(gui.ESCAPE):
         run_steps()
@@ -91,11 +91,8 @@ def profile():
     init()
     gui = ti.GUI('MPM88')
     while gui.running and not gui.get_event(gui.ESCAPE):
-        start = time.time()
         for _ in range(200):
             run_steps()
-            # x.to_numpy()
-        print(time.time() - start)
 #
 # run()
 # export()
