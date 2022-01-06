@@ -69,7 +69,7 @@ def export():
     m.add_kernel(substep)
 
     filename = 'mpm88'
-    tmpdir = 'mpm88_no_nv_extension'
+    tmpdir = 'field_aot'
     m.save(tmpdir, filename)
     with open(os.path.join(tmpdir,f'metadata.json')) as json_file:
         json.load(json_file)
@@ -94,7 +94,7 @@ def profile():
         for _ in range(200):
             run_steps()
 #
-run()
-# export()
+# run()
+export()
 # profile()
 

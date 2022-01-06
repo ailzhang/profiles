@@ -69,7 +69,7 @@ def aot():
     m = ti.aot.Module(ti.opengl)
     m.add_kernel(init, (x, v, J))
     m.add_kernel(substep, (x, v, J, C, grid_v, grid_m))
-    dir_name = 'mpm88_ndarray_no_nv_extension'
+    dir_name = 'ndarray_aot'
     m.save(dir_name, '')
     with open(os.path.join(dir_name, 'metadata.json')) as json_file:
         json.load(json_file)
@@ -89,8 +89,8 @@ def use_profiler():
     pr.print_stats(sort=SortKey.TIME)
     # stats = pstats.Stats(pr).print_callees()
 
-run()
-# aot()
+# run()
+aot()
 # profile()
 # use_profiler()
 
