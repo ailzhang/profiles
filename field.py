@@ -9,7 +9,7 @@ ti.init(arch=ti.opengl, log_level=ti.TRACE, allow_nv_shader_extension=False, use
 #ti.set_logging_level(ti.TRACE)
 
 N = 64
-n_particles = N * N * 2 * 16
+n_particles = N * N * 2
 n_grid = 128
 dx = 1 / n_grid
 dt = 2e-4
@@ -94,7 +94,7 @@ def profile():
         for _ in range(200):
             run_steps()
 #
-# run()
+run()
 # export()
-profile()
+# profile()
 
